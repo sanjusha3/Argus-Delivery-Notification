@@ -8,10 +8,14 @@ const passport = require('passport');
 const { ensureLoggedIn } = require('connect-ensure-login');
 const session = require('express-session');
 const { verifyToken, verifyAdmin } = require('./middleware/verifyToken');
+const cors = require('cors');
 
+// Allow requests from 'http://localhost:3000'
 
 // Initialization
 const app = express();
+
+app.use(cors({ origin: 'http://localhost:3000' }));
 
 app.use(morgan('dev'));
 app.set('view engine', 'ejs');
@@ -77,6 +81,6 @@ function ensureAdmin(req, res, next) {
   }
 }
 
-app.listen(3000, () => {
-  console.log("listening on port 3000")
+app.listen(8080, () => {
+  console.log("listening on port 8080")
 })

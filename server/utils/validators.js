@@ -31,8 +31,6 @@ const validators = (emp_id, emp_name, email, phone, password) => {
         errors.password = 'Password is required';
     } else if (password.length < 6 || password.length > 15) {
         errors.password = 'Password must be between 6 and 15 characters long';
-    } else if (!/\d/.test(password)) {
-        errors.password = 'Password must contain at least one digit';
     }
 
     // Check if there are any validation errors
