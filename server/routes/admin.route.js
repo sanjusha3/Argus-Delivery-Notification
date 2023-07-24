@@ -33,6 +33,8 @@ router.post('/add-new-package', async (req, res, next) => {
       values: [pkg_brand, empname]
     }
 
+    console.log("in")
+
     const package = await pool.query(newPackage);
     console.log(package)
 
