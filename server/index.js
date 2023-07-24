@@ -7,15 +7,29 @@ const connectFlash = require('connect-flash');
 const passport = require('passport');
 const { ensureLoggedIn } = require('connect-ensure-login');
 const session = require('express-session');
-const { verifyToken, verifyAdmin } = require('./middleware/verifyToken');
+const { verifyToken, verifyAdmin, verifyEmployee } = require('./middleware/verifyToken');
 const cors = require('cors');
-
-// Allow requests from 'http://localhost:3000'
-
 // Initialization
 const app = express();
 
-app.use(cors({ origin: 'http://localhost:3000' }));
+const cookies = require("cookie-parser");
+
+// app.use(cors())
+
+// app.use(cors({
+//   origin: 'http://localhost:3000', // Replace with your frontend URL
+//   credentials: true, // Enable credentials (cookies, in this case) to be sent in CORS requests
+// }));
+
+app.use(
+  cors({
+    origin: ["http://localhost:3000"],
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
+  })
+);
+app.use(cookies());
+
 
 app.use(morgan('dev'));
 app.set('view engine', 'ejs');
@@ -34,27 +48,28 @@ require('./utils/passport.auth');
 
 app.use((req, res, next) => {
   res.locals.user = req.user;
+  // res.header({ "Access-Control-Allow-Origin": "*" });
   next();
 });
-
-// Connect Flash
-// app.use(connectFlash());
-// app.use((req, res, next) => {
-//   res.locals.messages = req.flash();
-//   console.log("hjhkl")
-//   next();
-// });
 
 // Routes
 app.use('/', require('./routes/index.route'));
 app.use('/auth', require('./routes/auth.route'));
+app.get('/test-cookies', (req, res) => {
+  console.log(req.headers)
+  res.json({ cookies: req.cookies });
+});
+
 app.use(
-  '/user',
+  '/employee',
   // ensureLoggedIn({ redirectTo: '/auth/login' }),
+  // verifyToken,
+  // verifyEmployee,
   require('./routes/employee.route')
 );
 app.use(
   '/admin',
+  // ensureLoggedIn({ redirectTo: '/auth/login' }),
   // verifyToken,
   // verifyAdmin,
   require('./routes/admin.route')
@@ -72,15 +87,6 @@ app.use((error, req, res, next) => {
   res.render('error_40x', { error });
 });
 
-function ensureAdmin(req, res, next) {
-  if (req.user.role === roles.admin) {
-    next();
-  } else {
-    req.flash('warning', 'you are not Authorized to see this route');
-    res.redirect('/');
-  }
-}
-
 app.listen(8080, () => {
-  console.log("listening on port 8080")
+  console.log("Listening on port 8080")
 })

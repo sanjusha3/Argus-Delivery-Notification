@@ -13,7 +13,7 @@ router.get('/get-employee-packages/:name', async (req, res, next) => {
   }
 
   const packageData = await pool.query(query)
-  console.log(packageData.rows)
+  console.log("asdasdasd", packageData.rows)
   res.status(200).json({ count: packageData.rowCount, data: packageData.rows });
 });
 

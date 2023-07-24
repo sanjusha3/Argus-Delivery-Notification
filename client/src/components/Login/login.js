@@ -1,23 +1,18 @@
 
 import React, { useState } from "react"
+import { Link, useNavigate } from "react-router-dom";
+import { BiInfoCircle } from "react-icons/bi"
 
-const SignupLogin = (props) => {
-    let [authMode, setAuthMode] = useState("signin")
-    const [signupFormData, setSignupFormData] = useState({
-        emp_id: '', emp_name: '', email: '', phone: '', pswd: ''
-    });
-
+const Login = (props) => {
     const [loginFormData, setLoginFormData] = useState({
         email: '', pswd: ''
     });
 
-    const handleSignupChange = (event) => {
-        const { name, value } = event.target;
-        setSignupFormData((prevData) => ({
-            ...prevData,
-            [name]: value,
-        }));
-    };
+    const [loginErrors, setLoginErrors] = useState({
+        email: "", pswd: ""
+    })
+
+    const navigate = useNavigate();
 
     const handleLoginChange = (event) => {
         const { name, value } = event.target;
@@ -25,39 +20,21 @@ const SignupLogin = (props) => {
             ...prevData,
             [name]: value,
         }));
+        console.log(name)
+        setLoginErrors((prevData) => ({
+            ...prevData,
+            [name]: ""
+        }))
     };
 
-
-    const handleSignupFormSubmit = (event) => {
+    const handleLoginFormSubmit = async (event) => {
         event.preventDefault()
-        // console.log(signupFormData)
+        // console.log(loginFormData)
         try {
-            fetch("http://localhost:8080/auth/register",
+            await fetch("http://localhost:8080/auth/login",
                 {
                     method: "POST",
-                    headers: {
-                        'Content-Type': 'application/json', // Specify the content type of the request body
-                    },
-                    body: JSON.stringify(signupFormData),
-                }
-            )
-                .then(res => res.json())
-                .then(data => {
-                    console.log(data)
-                })
-        }
-        catch (err) {
-            console.log(err)
-        }
-    }
-
-    const handleLoginFormSubmit = (event) => {
-        event.preventDefault()
-        // console.log(signupFormData)
-        try {
-            fetch("http://localhost:8080/auth/login",
-                {
-                    method: "POST",
+                    credentials: 'include',
                     headers: {
                         'Content-Type': 'application/json', // Specify the content type of the request body
                     },
@@ -67,93 +44,38 @@ const SignupLogin = (props) => {
                 .then(res => res.json())
                 .then(data => {
                     console.log(data)
+                    if (data.status) {
+                        navigate("/employee/packageDetails");
+                    } else {
+                        setLoginErrors(data.error);
+                    }
+                    console.log(loginErrors)
                 })
+            fetch("/employee/get-employee-packages/Zainab Raja", {
+                method: 'GET',
+                credentials: 'include',
+                headers: {
+                    'Authorization': `Bearer <your_jwt_token_here>`,
+                },
+            })
+                .then(res => res.json())
+                .then(data => console.log(data))
         }
         catch (err) {
             console.log(err)
         }
     }
 
-    const changeAuthMode = () => {
-        setAuthMode(authMode === "signin" ? "signup" : "signin")
-    }
-
-    if (authMode === "signin") {
-        return (
-            <div className="Auth-form-container">
-                <form className="Auth-form" onSubmit={handleLoginFormSubmit}>
-                    <div className="Auth-form-content">
-                        <h3 className="Auth-form-title">Sign In</h3>
-                        <div className="text-center">
-                            Not registered yet?{" "}
-                            <span className="link-primary" onClick={changeAuthMode}>
-                                Sign Up
-                            </span>
-                        </div>
-                        <div className="form-group mt-3">
-                            <label>Email address</label>
-                            <input
-                                type="email"
-                                className="form-control mt-1"
-                                name="email"
-                                value={loginFormData.email}
-                                onChange={handleLoginChange}
-                            />
-                        </div>
-                        <div className="form-group mt-3">
-                            <label>Password</label>
-                            <input
-                                type="password"
-                                className="form-control mt-1"
-                                name="pswd"
-                                value={loginFormData.pswd}
-                                onChange={handleLoginChange}
-                            />
-                        </div>
-                        <div className="d-grid gap-2 mt-3">
-                            <button type="submit" className="btn btn-primary">
-                                Submit
-                            </button>
-                        </div>
-                        <p className="text-center mt-2">
-                            Forgot <a href="#">password?</a>
-                        </p>
-                    </div>
-                </form>
-            </div>
-        )
-    }
-
     return (
         <div className="Auth-form-container">
-            <form className="Auth-form" onSubmit={handleSignupFormSubmit}>
+            <form className="Auth-form" onSubmit={handleLoginFormSubmit}>
                 <div className="Auth-form-content">
-                    <h3 className="Auth-form-title">Sign Up</h3>
+                    <h3 className="Auth-form-title">Sign In</h3>
                     <div className="text-center">
-                        Already registered?{" "}
-                        <span className="link-primary" onClick={changeAuthMode}>
-                            Sign In
-                        </span>
-                    </div>
-                    <div className="form-group mt-3">
-                        <label>Employee ID</label>
-                        <input
-                            type="text"
-                            className="form-control mt-1"
-                            name="emp_id"
-                            value={signupFormData.emp_id}
-                            onChange={handleSignupChange}
-                        />
-                    </div>
-                    <div className="form-group mt-3">
-                        <label>Full Name</label>
-                        <input
-                            type="text"
-                            className="form-control mt-1"
-                            name="emp_name"
-                            value={signupFormData.emp_name}
-                            onChange={handleSignupChange}
-                        />
+                        Not registered yet?{" "}
+                        <Link to={"/signup"} className="link-primary">
+                            Sign Up
+                        </Link>
                     </div>
                     <div className="form-group mt-3">
                         <label>Email address</label>
@@ -161,19 +83,10 @@ const SignupLogin = (props) => {
                             type="email"
                             className="form-control mt-1"
                             name="email"
-                            value={signupFormData.email}
-                            onChange={handleSignupChange}
+                            value={loginFormData.email}
+                            onChange={handleLoginChange}
                         />
-                    </div>
-                    <div className="form-group mt-3">
-                        <label>Phone number</label>
-                        <input
-                            type="text"
-                            className="form-control mt-1"
-                            name="phone"
-                            value={signupFormData.phone}
-                            onChange={handleSignupChange}
-                        />
+                        {loginErrors.email && <span className="error-message text-danger"><BiInfoCircle size={20} /> {loginErrors.email}</span>}
                     </div>
                     <div className="form-group mt-3">
                         <label>Password</label>
@@ -181,9 +94,10 @@ const SignupLogin = (props) => {
                             type="password"
                             className="form-control mt-1"
                             name="pswd"
-                            value={signupFormData.pswd}
-                            onChange={handleSignupChange}
+                            value={loginFormData.pswd}
+                            onChange={handleLoginChange}
                         />
+                        {loginErrors.pswd && <span className="error-message text-danger"><BiInfoCircle size={20} /> {loginErrors.pswd}</span>}
                     </div>
                     <div className="d-grid gap-2 mt-3">
                         <button type="submit" className="btn btn-primary">
@@ -191,7 +105,7 @@ const SignupLogin = (props) => {
                         </button>
                     </div>
                     <p className="text-center mt-2">
-                        Forgot <a href="#">password?</a>
+                        Forgot password?
                     </p>
                 </div>
             </form>
@@ -199,4 +113,4 @@ const SignupLogin = (props) => {
     )
 }
 
-export default SignupLogin
+export default Login

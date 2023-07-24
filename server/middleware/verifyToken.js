@@ -2,7 +2,7 @@ const jwt = require("jsonwebtoken")
 require("dotenv").config()
 
 function verifyToken(req, res, next) {
-    const token = req.headers.authorization;
+    const token = req.cookies.token;
 
     if (!token) {
         return res.status(401).json({ message: 'No token provided' });
@@ -26,6 +26,7 @@ function verifyAdmin(req, res, next) {
     if (req.user.role !== 'admin') {
         return res.status(403).json({ message: 'Unauthorized access' });
     }
+    console.log("yess")
 
     next();
 }
@@ -35,7 +36,7 @@ function verifyEmployee(req, res, next) {
     if (req.user.role !== 'employee') {
         return res.status(403).json({ message: 'Unauthorized access' });
     }
-
+    console.log("yess")
     next();
 }
 

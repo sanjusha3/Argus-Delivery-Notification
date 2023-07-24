@@ -9,7 +9,7 @@ const validators = (emp_id, emp_name, email, phone, password) => {
 
     // Validate name (not null)
     if (!emp_name || emp_name.trim() === '') {
-        errors.emp_name = 'employee name is required';
+        errors.emp_name = 'Employee name is required';
     }
 
     // Validate email (@argusoft.com compulsory and not null)
