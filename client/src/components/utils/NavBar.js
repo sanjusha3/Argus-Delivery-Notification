@@ -53,18 +53,20 @@ const NavBar = () => {
                             </Offcanvas.Title> */}
                     </Offcanvas.Header>
                     <Offcanvas.Body>
-                        <Nav className="justify-content-end flex-grow-1 pe-3">
-                            {/* {isLoggedIn ?
+                        {isLoggedIn && (
+                            <Nav className="justify-content-end flex-grow-1 pe-3">
+                                {/* {isLoggedIn ?
                                 <>
                                     <Nav.Link href="/signup">Signup</Nav.Link>
                                     <Nav.Link href="/">Login</Nav.Link>
                                 </> :
                                 <Nav.Link onClick={handleLogout}>Logout</Nav.Link>
                             } */}
-                            {isLoggedIn && (
+                                <Nav.Link href="/employee/packageDetails">All Packages</Nav.Link>
+                                <Nav.Link href="/employee/packageDetails">Notifications</Nav.Link>
                                 <Nav.Link onClick={handleLogout}>Logout</Nav.Link>
-                            )}
-                        </Nav>
+                            </Nav>
+                        )}
                     </Offcanvas.Body>
                 </Navbar.Offcanvas>
             </Container>
