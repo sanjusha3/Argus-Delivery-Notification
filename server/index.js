@@ -11,6 +11,7 @@ const { verifyToken, verifyAdmin } = require('./middleware/verifyToken');
 const cors = require('cors');
 
 // Allow requests from 'http://localhost:3000'
+// 
 
 // Initialization
 const app = express();
