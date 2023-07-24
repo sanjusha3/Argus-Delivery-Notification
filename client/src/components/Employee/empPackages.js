@@ -4,15 +4,15 @@ import React, { useEffect } from "react";
 const EmployeePackages = () => {
 
     const fetchData = async () => {
-        const response = await fetch("http://localhost:8080/employee/get-employee-packages/Sanjusha", {
+        await fetch("http://localhost:8080/employee/get-employee-packages/sas", {
             method: 'GET',
             credentials: 'include',
             headers: {
                 'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InNAYXJndXNvZnQuY29tIiwicm9sZSI6ImVtcGxveWVlIiwiaWF0IjoxNjkwMTg4NDAxLCJleHAiOjE2OTAxOTU2MDF9.nXOz1HOIpoAtPG1WriJaZTQp02YZRO6RLLatt9mn0wk`,
             }
         })
-
-        console.log(response);
+            .then(res => res.json())
+            .then(data => console.log(data))
     }
 
     useEffect(() => {

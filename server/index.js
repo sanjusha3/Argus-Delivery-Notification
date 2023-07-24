@@ -63,15 +63,15 @@ app.get('/test-cookies', (req, res) => {
 app.use(
   '/employee',
   // ensureLoggedIn({ redirectTo: '/auth/login' }),
-  // verifyToken,
-  // verifyEmployee,
+  verifyToken,
+  verifyEmployee,
   require('./routes/employee.route')
 );
 app.use(
   '/admin',
   // ensureLoggedIn({ redirectTo: '/auth/login' }),
-  // verifyToken,
-  // verifyAdmin,
+  verifyToken,
+  verifyAdmin,
   require('./routes/admin.route')
 );
 
