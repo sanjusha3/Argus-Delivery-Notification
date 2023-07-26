@@ -8,7 +8,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 // import moment from "moment";
 
-const AdminPackages = () => {
+const EmployeeDetails = () => {
     useEffect(() => {
         fetchData();
 
@@ -22,11 +22,11 @@ const AdminPackages = () => {
         "Employee Name": "emp_name",
         "Email": "email",
         "Phone": "phone",
-        "Packages": "pkg_id"
+        "Packages": "pkgid"
     };
 
     const fetchData = async () => {
-        await fetch("http://localhost:8080/admin/employee-details/sas", {
+        await fetch("http://localhost:8080/admin/employee-details/", {
             method: 'GET',
             credentials: 'include',
             // headers: {
@@ -35,15 +35,8 @@ const AdminPackages = () => {
         })
             .then(res => res.json())
             .then(data => {
-                data.data.map(pkg => {
-                    // console.log(pkg)
-                    // pkg.date = moment.utc(pkg.date).format("DD-MM-YYYY HH:mm:ss");
-                    // if (pkg.pkg_received_date) {
-                    //     pkg.pkg_received_date = moment.utc(pkg.pkg_received_date).format("DD-MM-YYYY HH:mm:ss");
-                    // }
-                })
                 setPackageData(data.data);
-                console.log(packageData)
+                console.log(data.data)
             })
     }
 
@@ -71,6 +64,23 @@ const AdminPackages = () => {
                                     ))}
                                 </TableRow>
                             ))}
+                            {/* {packageData.map((row, rowIndex) => (
+                                <TableRow hover role="checkbox" tabIndex={-1} key={rowIndex}>
+                                    {columns.map((column, columnIndex) => {
+                                        if (column !== "Packages") {
+                                            return (
+                                                <TableCell key={columnIndex} align="center">
+                                                    {row[columnDataFieldMap[column]] ? row[columnDataFieldMap[column]] : "-"}
+                                                </TableCell>
+                                            );
+                                        } else {
+                                            return row[columnDataFieldMap[column]].join(', ')
+                                        }
+                                    })}
+                                </TableRow>
+                            ))} */}
+
+
                         </TableBody>
                     </Table>
                 </TableContainer>
@@ -79,4 +89,4 @@ const AdminPackages = () => {
     );
 }
 
-export default AdminPackages
+export default EmployeeDetails

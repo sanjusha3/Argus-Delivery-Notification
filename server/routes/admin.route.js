@@ -11,10 +11,27 @@ router.get('/employee-details', async (req, res, next) => {
   try {
     const employee_data = await pool.query("SELECT emp_id, emp_name, email, phone, pkgId from EMPLOYEE;");
     // console.log(employee_data.rows)
-    res.status(200).json(employee_data.rows);
+    // res.status(200).json(employee_data.rows);
+    console.log("asdasdasd", employee_data.rows)
+    res.status(200).json({ count: employee_data.rowCount, data: employee_data.rows });
   } catch (err) {
     console.log(err)
   }
+});
+
+router.get('/getAllPackages', async (req, res, next) => {
+  const query = {
+    text: `SELECT p.pkg_id, p.pkg_brand, p.empname, e.emp_id, p.date, ps.pkg_received, ps.pkg_receivedby, ps.pkg_received_date
+              FROM package_status ps
+              JOIN package p ON ps.pkg_id = p.pkg_id
+              JOIN employee e ON p.empname = e.emp_name;
+        `
+    // values: [req.params.name]
+  }
+  // WHERE p.empname = $1 and ps.pkg_received = false;
+
+  const packageData = await pool.query(query)
+  res.status(200).json({ count: packageData.rowCount, data: packageData.rows });
 });
 
 router.get('/get-employee-names', async (req, res) => {
@@ -52,26 +69,26 @@ router.post('/add-new-package', async (req, res, next) => {
 });
 
 
-router.get('/package-data/:id', async (req, res, next) => {
-  try {
-    const query = {
-      text: `SELECT p.pkg_id, p.pkg_brand, e.emp_id, e.emp_name, ps.pkg_received, ps.pkg_receivedby
-              FROM package_status ps
-              JOIN package p ON ps.pkg_id = p.pkg_id
-              JOIN employee e ON p.empname = e.emp_name
+// router.get('/package-data/:id', async (req, res, next) => {
+//   try {
+//     const query = {
+//       text: `SELECT p.pkg_id, p.pkg_brand, e.emp_id, e.emp_name, ps.pkg_received, ps.pkg_receivedby
+//               FROM package_status ps
+//               JOIN package p ON ps.pkg_id = p.pkg_id
+//               JOIN employee e ON p.empname = e.emp_name
 
-              WHERE p.pkg_id = $1;
-        `,
-      values: [req.params.id]
-    }
+//               WHERE p.pkg_id = $1;
+//         `,
+//       values: [req.params.id]
+//     }
 
-    const packageData = await pool.query(query)
-    console.log(packageData.rows)
-  } catch (error) {
-    console.log(error)
-    next(error);
-  }
-});
+//     const packageData = await pool.query(query)
+//     console.log(packageData.rows)
+//   } catch (error) {
+//     console.log(error)
+//     next(error);
+//   }
+// });
 
 
 module.exports = router;
