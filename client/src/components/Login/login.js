@@ -45,7 +45,7 @@ const Login = (props) => {
                 .then(data => {
                     console.log(data)
                     if (data.status) {
-                        navigate("/employee/packageDetails");
+                        navigate("/employee/packages");
                     } else {
                         setLoginErrors(data.error);
                     }

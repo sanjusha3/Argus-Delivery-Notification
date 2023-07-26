@@ -62,8 +62,8 @@ const NavBar = () => {
                                 </> :
                                 <Nav.Link onClick={handleLogout}>Logout</Nav.Link>
                             } */}
-                                <Nav.Link href="/employee/packageDetails">All Packages</Nav.Link>
-                                <Nav.Link href="/employee/packageDetails">Notifications</Nav.Link>
+                                <Nav.Link href="/employee/packages">All Packages</Nav.Link>
+                                <Nav.Link href="/employee/packages">Notifications</Nav.Link>
                                 <Nav.Link onClick={handleLogout}>Logout</Nav.Link>
                             </Nav>
                         )}

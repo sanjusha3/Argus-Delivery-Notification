@@ -8,7 +8,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import moment from "moment";
 
-const EmployeePackages = () => {
+const Packages = () => {
     useEffect(() => {
         fetchData();
 
@@ -27,7 +27,7 @@ const EmployeePackages = () => {
     };
 
     const fetchData = async () => {
-        await fetch("http://localhost:8080/employee/get-employee-packages/Zainab raja", {
+        await fetch("http://localhost:8080/employee/get-employee-packages/sas", {
             method: 'GET',
             credentials: 'include',
             // headers: {
@@ -37,10 +37,10 @@ const EmployeePackages = () => {
             .then(res => res.json())
             .then(data => {
                 data.data.map(pkg => {
-                    // console.log(pkg)
-                    pkg.date = moment.utc(pkg.date).format("DD-MM-YYYY HH:mm:ss");
-                    if (pkg.pkg_received_date) {
-                        pkg.pkg_received_date = moment.utc(pkg.pkg_received_date).format("DD-MM-YYYY HH:mm:ss");
+                    console.log(pkg)
+                    // pkg.date = moment.utc(pkg.date).format("DD-MM-YYYY HH:mm:ss");
+                    if (pkg.date) {
+                        pkg.date = moment.utc(pkg.date).format("DD-MM-YYYY HH:mm:ss");
                     }
                 })
                 setPackageData(data.data);
@@ -80,4 +80,4 @@ const EmployeePackages = () => {
     );
 }
 
-export default EmployeePackages
+export default Packages

@@ -62,14 +62,14 @@ app.get('/test-cookies', (req, res) => {
 
 app.use(
   '/employee',
-  verifyToken,
-  verifyEmployee,
+  // verifyToken,
+  // verifyEmployee,
   require('./routes/employee.route')
 );
 app.use(
   '/admin',
-  verifyToken,
-  verifyAdmin,
+  // verifyToken,
+  // verifyAdmin,
   require('./routes/admin.route')
 );
 
