@@ -1,6 +1,5 @@
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('../db.js');
-const Package = require("./package.model.js")
 
 const Employee = sequelize.define('Employee', {
   emp_id: {
@@ -41,8 +40,6 @@ const Employee = sequelize.define('Employee', {
   tableName: "employee",
   timestamps: false
 });
-
-// Define associations
 
 
 module.exports = Employee;

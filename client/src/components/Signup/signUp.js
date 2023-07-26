@@ -1,9 +1,17 @@
 import React, { useEffect, useState, Redirect } from "react"
 import { Link, useNavigate } from "react-router-dom";
+import { connect } from 'react-redux';
 // import { InfoOutlined } from "@mui/icons-material";
 import { BiInfoCircle } from "react-icons/bi"
 
 const Signup = (props) => {
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if (props.token) {
+            navigate(props.role === "employee" ? "/employee/packages" : "/admin/employeeDetails");
+        }
+    }, [props.token]);
     const [signupFormData, setSignupFormData] = useState({
         emp_id: '', emp_name: '', email: '', phone: '', pswd: ''
     });
@@ -11,16 +19,6 @@ const Signup = (props) => {
     const [signUpErrors, setSignUpErrors] = useState({
         emp_id: "", emp_name: "", email: "", phone: "", pswd: ""
     })
-    console.log("pprops", props)
-    const navigate = useNavigate();
-
-    // useEffect = () => {
-    //     props.isLoggedIn ? (
-    //         <Redirect to="/dashboard" />
-    //     ) : (
-    //         <Component {...props} />
-    //     )
-    // }
 
     const handleSignupChange = (event) => {
         const { name, value } = event.target;
@@ -28,7 +26,6 @@ const Signup = (props) => {
             ...prevData,
             [name]: value,
         }));
-        console.log(name)
         setSignUpErrors((prevData) => ({
             ...prevData,
             [name]: ""
@@ -49,13 +46,11 @@ const Signup = (props) => {
             )
                 .then(res => res.json())
                 .then(data => {
-                    console.log(data)
                     if (data.status) {
                         navigate("/");
                     } else {
                         setSignUpErrors(data.error);
                     }
-                    console.log(signUpErrors)
                 })
         }
         catch (err) {
@@ -143,4 +138,9 @@ const Signup = (props) => {
     )
 }
 
-export default Signup
+const mapStateToProps = state => ({
+    role: state.role,
+    token: state.token,
+});
+
+export default connect(mapStateToProps)(Signup)

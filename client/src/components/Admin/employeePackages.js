@@ -48,7 +48,6 @@ const EmployeePackages = () => {
             .then(res => res.json())
             .then(data => {
                 data.data.map(pkg => {
-                    console.log(pkg)
                     if (pkg.pkg_received_date) {
                         pkg.pkg_received_date = moment.utc(pkg.pkg_received_date).format("DD-MM-YYYY HH:mm:ss");
                     }
@@ -57,8 +56,6 @@ const EmployeePackages = () => {
                     }
                 })
                 setPackageData(data.data);
-                console.log(data.data)
-                console.log(packageData)
             })
     }
 

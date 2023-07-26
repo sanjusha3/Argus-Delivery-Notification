@@ -27,11 +27,6 @@ const Package = sequelize.define('Package', {
   timestamps: false,
 });
 
-// Define associations
-// Employee.associate = function (models) {
-//   Employee.hasMany(Package, { foreignKey: 'emp_name' });
-// }
-
 Package.associate = function (models) {
   Package.belongsTo(Employee, { foreignKey: 'empname' });
   Package.hasOne(PackageStatus, { foreignKey: 'pkg_id' });

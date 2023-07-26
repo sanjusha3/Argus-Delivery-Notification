@@ -36,7 +36,6 @@ const EmployeeDetails = () => {
             .then(res => res.json())
             .then(data => {
                 setPackageData(data.data);
-                console.log(data.data)
             })
     }
 

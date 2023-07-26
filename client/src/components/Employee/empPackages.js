@@ -30,21 +30,15 @@ const Packages = () => {
         await fetch("http://localhost:8000/employee/get-employee-packages/Zainab raja", {
             method: 'GET',
             credentials: 'include',
-            // headers: {
-            //     'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InNAYXJndXNvZnQuY29tIiwicm9sZSI6ImVtcGxveWVlIiwiaWF0IjoxNjkwMTg4NDAxLCJleHAiOjE2OTAxOTU2MDF9.nXOz1HOIpoAtPG1WriJaZTQp02YZRO6RLLatt9mn0wk`,
-            // }
         })
             .then(res => res.json())
             .then(data => {
                 data.data.map(pkg => {
-                    console.log(pkg)
-                    // pkg.date = moment.utc(pkg.date).format("DD-MM-YYYY HH:mm:ss");
                     if (pkg.date) {
                         pkg.date = moment.utc(pkg.date).format("DD-MM-YYYY HH:mm:ss");
                     }
                 })
                 setPackageData(data.data);
-                console.log(packageData)
             })
     }
 

@@ -14,7 +14,6 @@ function verifyToken(req, res, next) {
             return res.status(401).json({ message: 'Invalid token' });
         }
 
-        // Token is valid, attach the decoded payload to the request object
         req.user = decoded;
 
         next();
@@ -26,8 +25,6 @@ function verifyAdmin(req, res, next) {
     if (req.user.role !== 'admin') {
         return res.status(403).json({ message: 'Unauthorized access' });
     }
-    console.log("yess")
-
     next();
 }
 
@@ -36,7 +33,6 @@ function verifyEmployee(req, res, next) {
     if (req.user.role !== 'employee') {
         return res.status(403).json({ message: 'Unauthorized access' });
     }
-    console.log("yess")
     next();
 }
 

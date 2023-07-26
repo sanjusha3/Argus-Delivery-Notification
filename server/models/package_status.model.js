@@ -1,6 +1,5 @@
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('../db');
-const Package = require('./package.model');
 
 const PackageStatus = sequelize.define('PackageStatus', {
   pkg_id: {
@@ -22,8 +21,5 @@ const PackageStatus = sequelize.define('PackageStatus', {
   tableName: "package_status",
   timestamps: false
 });
-
-// Define associations
-
 
 module.exports = PackageStatus;

@@ -1,15 +1,8 @@
 const router = require('express').Router();
-const Employee = require('../models/employee.model');
-const Package = require('../models/package.model');
-const User = require('../models/user.model');
 const { pool } = require("../db")
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
-const { body, validationResult } = require('express-validator');
-const passport = require('passport');
 const { ensureLoggedOut, ensureLoggedIn } = require('connect-ensure-login');
-const { registerValidator } = require('../utils/validatorsold');
-const { getRounds } = require('bcrypt');
 const validators = require('../utils/validators');
 require('dotenv').config();
 
@@ -25,7 +18,7 @@ router.post("/login", ensureLoggedOut({ redirectTo: '/' }), async (req, res) => 
   if (!pswd || pswd.toString().trim() === '') {
     errors.pswd = 'Password is required';
   }
-  console.log(errors)
+
   if (Object.keys(errors).length > 0) {
     return res.status(400).json({ error: errors, status: false })
   }
@@ -61,26 +54,18 @@ router.post("/login", ensureLoggedOut({ redirectTo: '/' }), async (req, res) => 
     email: doesExist.rows[0].email,
     role: doesExist.rows[0].role
   }
-  // res.json({ token });
-  // res.cookie("jwt", token, { httpOnly: true, maxAge: maxAge * 1000 });
+
   res.cookie("token", token, {
     withCredentials: true,
     httpOnly: false,
   });
   res.status(200).json({ employee: req.user, status: true });
-
-  // user logged in succesfully
-
 })
 
 router.post("/register", ensureLoggedOut({ redirectTo: '/' }), async (req, res) => {
   try {
-    // Get user input
-    console.log(req.body)
     const { emp_id, emp_name, email, phone, pswd } = req.body;
-    console.log("req.body", req.body)
 
-    // check if user already exist
     // Validate if user exist in our database
     const findExistingUser = {
       text: "SELECT * from EMPLOYEE where email = $1 OR emp_id = $2 OR phone = $3 OR emp_name = $4;",
@@ -88,7 +73,6 @@ router.post("/register", ensureLoggedOut({ redirectTo: '/' }), async (req, res) 
     }
     let errors = {}
     errors = validators(emp_id, emp_name, email, phone, pswd);
-    console.log(errors);
 
     if (errors) {
       return res.status(400).json({ error: errors, status: false })
@@ -119,7 +103,6 @@ router.post("/register", ensureLoggedOut({ redirectTo: '/' }), async (req, res) 
 
     const emp = await pool.query(query);
 
-    console.log("159", emp)
     // return new user
     res.status(201).json({ employee: emp.rows, status: true });
   } catch (err) {
@@ -131,8 +114,7 @@ router.post("/register", ensureLoggedOut({ redirectTo: '/' }), async (req, res) 
 
 router.get('/logout', async (req, res, next) => {
   res.clearCookie('token');
-  res.status(200).json({ message: 'Logged out successfully.' });
-}
-);
+  res.status(200).json({ message: 'Logged out successfully.', status: true });
+});
 
 module.exports = router;

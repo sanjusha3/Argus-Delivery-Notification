@@ -3,9 +3,10 @@ import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import Offcanvas from 'react-bootstrap/Offcanvas';
+import { useDispatch } from 'react-redux';
+import { connect } from 'react-redux';
 
-
-const NavBar = () => {
+const NavBar = (props) => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
 
     useEffect(() => {
@@ -15,6 +16,8 @@ const NavBar = () => {
             setIsLoggedIn(true);
         }
     }, []);
+
+    const dispatch = useDispatch();
 
     const getCookie = (name) => {
         const value = `; ${document.cookie}`;
@@ -30,8 +33,9 @@ const NavBar = () => {
             })
                 .then(res => res.json())
                 .then(res => {
-                    window.location.href = '/'
                     setIsLoggedIn(false);
+                    dispatch({ type: 'SET_TOKEN', payload: false });
+                    window.location.href = '/'
                 })
         } catch (error) {
             console.error('Logout error:', error);
@@ -41,37 +45,44 @@ const NavBar = () => {
         <Navbar key='lg' expand='lg' className="bg-body-tertiary mb-3">
             <Container fluid>
                 <Navbar.Brand href="#">Argus Deliver</Navbar.Brand>
-                <Navbar.Toggle aria-controls={`offcanvasNavbar-expand-lg`} />
-                <Navbar.Offcanvas
-                    id={`offcanvasNavbar-expand-$'lg'`}
-                    aria-labelledby={`offcanvasNavbarLabel-expand-lg`}
-                    placement="end"
-                >
-                    <Offcanvas.Header closeButton>
-                        {/* <Offcanvas.Title id={`offcanvasNavbarLabel-expand-lg`}>
+                {isLoggedIn && (
+                    <>
+                        <Navbar.Toggle aria-controls={`offcanvasNavbar-expand-lg`} />
+                        <Navbar.Offcanvas
+                            id={`offcanvasNavbar-expand-$'lg'`}
+                            aria-labelledby={`offcanvasNavbarLabel-expand-lg`}
+                            placement="end"
+                        >
+                            <Offcanvas.Header closeButton>
+                                {/* <Offcanvas.Title id={`offcanvasNavbarLabel-expand-lg`}>
                                 Offcanvas
                             </Offcanvas.Title> */}
-                    </Offcanvas.Header>
-                    <Offcanvas.Body>
-                        {isLoggedIn && (
-                            <Nav className="justify-content-end flex-grow-1 pe-3">
-                                {/* {isLoggedIn ?
-                                <>
-                                    <Nav.Link href="/signup">Signup</Nav.Link>
-                                    <Nav.Link href="/">Login</Nav.Link>
-                                </> :
-                                <Nav.Link onClick={handleLogout}>Logout</Nav.Link>
-                            } */}
-                                <Nav.Link href="/employee/packages">All Packages</Nav.Link>
-                                <Nav.Link href="/employee/packages">Notifications</Nav.Link>
-                                <Nav.Link onClick={handleLogout}>Logout</Nav.Link>
-                            </Nav>
-                        )}
-                    </Offcanvas.Body>
-                </Navbar.Offcanvas>
+                            </Offcanvas.Header>
+                            <Offcanvas.Body>
+                                {props.role === "admin" ?
+                                    <Nav className="justify-content-end flex-grow-1 pe-3">
+                                        <Nav.Link href="/admin/employeeDetails">Employee Details</Nav.Link>
+                                        <Nav.Link href="/admin/packageDetails">Employee Packages</Nav.Link>
+                                        <Nav.Link onClick={handleLogout}>Logout</Nav.Link>
+                                    </Nav> :
+                                    <Nav className="justify-content-end flex-grow-1 pe-3">
+                                        <Nav.Link href="/employee/packages">All Packages</Nav.Link>
+                                        <Nav.Link href="/employee/packages">Notifications</Nav.Link>
+                                        <Nav.Link onClick={handleLogout}>Logout</Nav.Link>
+                                    </Nav>
+                                }
+                            </Offcanvas.Body>
+                        </Navbar.Offcanvas>
+                    </>
+                )}
             </Container>
         </Navbar>
     );
 }
 
-export default NavBar;
+const mapStateToProps = state => ({
+    role: state.role,
+    token: state.token,
+});
+
+export default connect(mapStateToProps)(NavBar);

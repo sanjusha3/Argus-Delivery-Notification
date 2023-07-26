@@ -1,9 +1,19 @@
 
-import React, { useState } from "react"
+import React, { useEffect, useState, Redirect } from "react"
 import { Link, useNavigate } from "react-router-dom";
+import { connect } from 'react-redux';
 import { BiInfoCircle } from "react-icons/bi"
+import { useDispatch } from 'react-redux';
 
 const Login = (props) => {
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if (props.token) {
+            navigate(props.role === "employee" ? "/employee/packages" : "/admin/employeeDetails");
+        }
+    }, [props.token]);
+
     const [loginFormData, setLoginFormData] = useState({
         email: '', pswd: ''
     });
@@ -12,7 +22,7 @@ const Login = (props) => {
         email: "", pswd: ""
     })
 
-    const navigate = useNavigate();
+    const dispatch = useDispatch();
 
     const handleLoginChange = (event) => {
         const { name, value } = event.target;
@@ -34,23 +44,23 @@ const Login = (props) => {
                     method: "POST",
                     credentials: 'include',
                     headers: {
-                        'Content-Type': 'application/json', // Specify the content type of the request body
+                        'Content-Type': 'application/json',
                     },
                     body: JSON.stringify(loginFormData),
                 }
             )
                 .then(res => res.json())
                 .then(data => {
-                    console.log(data)
                     if (data.status) {
-                        if (data.admin) {
-                            navigate("/admin/employeeDetails");
-                        } else {
-                            navigate("/employee/packages");
-                        }
+                        const role = data.employee.role === "admin" ? "admin" : "employee";
+                        dispatch({ type: 'SET_ROLE', payload: role });
+                        dispatch({ type: 'SET_TOKEN', payload: true });
+                        navigate(`/${role === "admin" ? "admin/employeeDetails" : "employee/packages"}`);
                     } else {
                         setLoginErrors(data.error);
+                        dispatch({ type: 'SET_TOKEN', payload: false });
                     }
+
                 })
         }
         catch (err) {
@@ -105,4 +115,9 @@ const Login = (props) => {
     )
 }
 
-export default Login
+const mapStateToProps = state => ({
+    role: state.role,
+    token: state.token,
+});
+
+export default connect(mapStateToProps)(Login)

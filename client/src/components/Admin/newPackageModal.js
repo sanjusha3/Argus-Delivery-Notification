@@ -1,7 +1,13 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
+import { BiInfoCircle } from "react-icons/bi"
+
 
 const NewPackageModal = () => {
     const [show, setShow] = useState(false);
@@ -9,10 +15,32 @@ const NewPackageModal = () => {
     const [formData, setFormData] = useState({
         pkg_brand: '', empname: ''
     });
-
-    const [Errors, setErrors] = useState({
+    const [errors, setErrors] = useState({
         pkg_brand: '', empname: ''
     })
+
+    const [empNames, setEmpNames] = useState([])
+
+    useEffect(() => {
+        getEmployeeNames()
+    }, [])
+
+    const getEmployeeNames = async () => {
+        await fetch("http://localhost:8000/admin/get-employee-names/", {
+            method: 'GET',
+            credentials: 'include',
+        })
+            .then(res => res.json())
+            .then(data => {
+                const empNames = []
+                if (data.status) {
+                    data.data.map(emp => {
+                        empNames.push(emp.emp_name)
+                    })
+                    setEmpNames(empNames)
+                }
+            })
+    }
 
     const handleChange = (event) => {
         const { name, value } = event.target;
@@ -20,7 +48,6 @@ const NewPackageModal = () => {
             ...prevData,
             [name]: value,
         }));
-        console.log(name)
         setErrors((prevData) => ({
             ...prevData,
             [name]: ""
@@ -28,36 +55,40 @@ const NewPackageModal = () => {
     };
 
     const handleClose = () => {
+        setFormData({ pkg_brand: "", empname: "" })
+        setErrors({ pkg_brand: "", empname: "" })
         setShow(false)
     }
 
-
-    const handleSubmit = () => {
-        try {
-            fetch("http://localhost:8000/admin/add-new-package",
-                {
-                    method: "POST",
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(formData),
-                }
-            )
-                .then(res => res.json())
-                .then(data => {
-                    console.log(data)
-                    if (data.status) {
-                    } else {
-                        setErrors(data.error);
+    const handleSubmit = async () => {
+        if (formData.pkg_brand.length === 0) {
+            await setErrors({ pkg_brand: "Please enter a brand name" })
+        } else if (formData.empname.length === 0) {
+            await setErrors({ empname: "Please select an employee" })
+        } else {
+            try {
+                await fetch("http://localhost:8000/admin/add-new-package",
+                    {
+                        method: "POST",
+                        credentials: 'include',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(formData),
                     }
-                    // console.log(Errors)
-                })
+                )
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.status) {
+                            setShow(false)
+                            window.location.reload();
+                        }
+                    })
+            }
+            catch (err) {
+                console.log(err)
+            }
         }
-        catch (err) {
-            console.log(err)
-        }
-        setShow(false)
-        window.location.reload();
     };
     const handleShow = () => setShow(true);
 
@@ -77,43 +108,30 @@ const NewPackageModal = () => {
                         <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
                             <Form.Label>Package Brand</Form.Label>
                             <Form.Control
+                                className='py-3'
                                 name="pkg_brand"
                                 type="text"
-                                autoFocus
                                 onChange={handleChange}
                             />
+                            {errors.pkg_brand && <span className="error-message text-danger"><BiInfoCircle size={20} /> {errors.pkg_brand}</span>}
                         </Form.Group>
                         <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-                            <Form.Label>Employee Name (add a select option)</Form.Label>
-                            <Form.Control
-                                name="empname"
-                                type="text"
-                                onChange={handleChange}
-                            />
+                            <Form.Label>Employee Name</Form.Label>
+                            <FormControl fullWidth>
+                                <InputLabel id="demo-simple-select-label">Choose a name</InputLabel>
+                                <Select
+                                    name='empname'
+                                    value={formData.empname}
+                                    label="Choose a name"
+                                    onChange={handleChange}
+                                >
+                                    {empNames.map((empName, nameIndex) => {
+                                        return (<MenuItem key={nameIndex} value={empName}>{empName}</MenuItem>)
+                                    })}
+                                </Select>
+                            </FormControl>
+                            {errors.empname && <span className="error-message text-danger"><BiInfoCircle size={20} /> {errors.empname}</span>}
                         </Form.Group>
-                        <div>**Handle errors also**</div>
-                        {/* <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-                            <Form.Label>Email address</Form.Label>
-                            <Form.Control
-                                type="email"
-                                placeholder="name@example.com"
-                            />
-                        </Form.Group>
-                        <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-                            <Form.Label>Email address</Form.Label>
-                            <Form.Control
-                                type="email"
-                                placeholder="name@example.com"
-                            />
-                        </Form.Group>
-                        <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-                            <Form.Label>Email address</Form.Label>
-                            <Form.Control
-                                type="email"
-                                placeholder="name@example.com"
-                            />
-                        </Form.Group> */}
-
                     </Form>
                 </Modal.Body>
                 <Modal.Footer>

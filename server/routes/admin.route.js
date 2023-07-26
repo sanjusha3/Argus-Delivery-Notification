@@ -1,48 +1,46 @@
-const User = require('../models/user.model');
-const Employee = require("../models/employee.model")
-const Package = require("../models/package.model")
-const PackageStatus = require("../models/package_status.model")
 const { pool } = require("../db")
 const router = require('express').Router();
-const { roles } = require('../utils/constants');
-const { verifyToken, verifyAdmin } = require('../middleware/verifyToken');
 
 router.get('/employee-details', async (req, res, next) => {
   try {
     const employee_data = await pool.query("SELECT emp_id, emp_name, email, phone, pkgId from EMPLOYEE;");
-    // console.log(employee_data.rows)
-    // res.status(200).json(employee_data.rows);
-    console.log("asdasdasd", employee_data.rows)
-    res.status(200).json({ count: employee_data.rowCount, data: employee_data.rows });
+    res.status(200).json({ data: employee_data.rows, status: true });
   } catch (err) {
     console.log(err)
+    res.status(400).json({ err: err.detail, status: false });
   }
 });
 
 router.get('/getAllPackages', async (req, res, next) => {
-  const query = {
-    text: `SELECT p.pkg_id, p.pkg_brand, p.empname, e.emp_id, p.date, ps.pkg_received, ps.pkg_receivedby, ps.pkg_received_date
+  try {
+    const query = {
+      text: `SELECT p.pkg_id, p.pkg_brand, p.empname, e.emp_id, p.date, ps.pkg_received, ps.pkg_receivedby, ps.pkg_received_date
               FROM package_status ps
               JOIN package p ON ps.pkg_id = p.pkg_id
               JOIN employee e ON p.empname = e.emp_name;
         `
-    // values: [req.params.name]
-  }
-  // WHERE p.empname = $1 and ps.pkg_received = false;
+    }
 
-  const packageData = await pool.query(query)
-  res.status(200).json({ count: packageData.rowCount, data: packageData.rows });
+    const packageData = await pool.query(query)
+    res.status(200).json({ data: packageData.rows, status: true });
+  } catch (err) {
+    console.log(err)
+    res.status(400).json({ err: err.detail, status: false });
+  }
 });
 
 router.get('/get-employee-names', async (req, res) => {
-  const employee_names = await pool.query("SELECT emp_name from EMPLOYEE;");
-  console.log(employee_names.rows)
-  res.status(200).json(employee_names.rows);
+  try {
+    const employee_names = await pool.query("SELECT emp_name from EMPLOYEE where role = 'employee';");
+    res.status(200).json({ data: employee_names.rows, status: true });
+  } catch (err) {
+    console.log(err)
+    res.status(400).json({ err: err.detail, status: false });
+  }
 })
 
 router.post('/add-new-package', async (req, res, next) => {
   let email, brand;
-  console.log(req.body)
   try {
     const { pkg_brand, empname } = req.body;
 
@@ -56,12 +54,9 @@ router.post('/add-new-package', async (req, res, next) => {
       values: [empname]
     }
 
-    console.log("in")
-
     const package = await pool.query(newPackage);
-    console.log(package)
     const emailResult = await pool.query(getEmail)
-    console.log("email", emailResult.rows[0].email)
+
     email = emailResult.rows[0].email
     brand = pkg_brand
 
@@ -71,11 +66,11 @@ router.post('/add-new-package', async (req, res, next) => {
     await pool.query('INSERT INTO package_status (pkg_id) VALUES($1)', [package.rows[0].pkg_id])
 
 
-    res.status(200).json(package);
+    res.status(200).json({ package, status: true });
     // mailDetails.to = emailResult.rows[0].email
   } catch (err) {
     console.log(err)
-    res.status(400).json(err.detail);
+    res.status(400).json({ err: err.detail, status: true });
   }
   const nodemailer = require('nodemailer');
 
@@ -93,25 +88,18 @@ router.post('/add-new-package', async (req, res, next) => {
     from: 'snagwani@argusoft.com',
     to: email,
     subject: 'Test mail',
-    text: 'Your ' + brand + 'package has been recieved in the office.'
+    text: `Your package from ${brand.toUpperCase()} has arrived. Please collect it from reception.`
   };
 
   mailTransporter.sendMail(mailDetails, function (err, data) {
     if (err) {
       console.log(mailDetails)
-      console.log('Error Occurs');
+      console.log('Error Occurs', err);
     } else {
       console.log('Email sent successfully');
     }
   });
-  mailTransporter.sendMail(mailDetails, function (err, data) {
-    if (err) {
-      console.log(mailDetails)
-      console.log('Error Occurs');
-    } else {
-      console.log('Email sent successfully');
-    }
-  });
+
 
 
 

@@ -2,7 +2,7 @@
 import "bootstrap/dist/css/bootstrap.min.css"
 import "./App.css"
 import { BrowserRouter, Routes, Route } from "react-router-dom"
-import { useState, useEffect } from "react"
+import { connect } from 'react-redux';
 // import Auth from "./Auth"
 import Signup from "./components/Signup/signUp"
 import Login from "./components/Login/login"
@@ -11,35 +11,33 @@ import Packages from "./components/Employee/empPackages"
 import EmployeeDetails from "./components/Admin/employeeDetails"
 import EmployeePackages from "./components/Admin/employeePackages"
 
-function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  useEffect(() => {
-    const token = getCookie('token');
-
-    if (token) {
-      setIsLoggedIn(true);
-    }
-  }, []);
-
-  const getCookie = (name) => {
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) return parts.pop().split(';').shift();
-  };
-
+function App(props) {
   return (
     <BrowserRouter>
       <NavBar />
       <Routes>
-        <Route exact path="/" element={<Login isLoggedIn={isLoggedIn} />} />
-        <Route exact path="/signup" element={<Signup isLoggedIn={isLoggedIn} />} />
-        <Route exact path="/employee/packages" element={<Packages />} />
-        <Route exact path="/admin/employeeDetails" element={<EmployeeDetails />} />
-        <Route exact path="/admin/packageDetails" element={<EmployeePackages />} />
+        <Route exact path="/" element={<Login />} />
+        <Route exact path="/signup" element={<Signup />} />
       </Routes>
+      {props.token && props.role === "employee" ? <Routes><Route exact path="/employee/packages" element={<Packages />} /></Routes>
+        :
+        props.token && props.role === "admin" ?
+          <Routes>
+            <Route exact path="/admin/employeeDetails" element={<EmployeeDetails />} />
+            <Route exact path="/admin/packageDetails" element={<EmployeePackages />} />
+          </Routes>
+          : (
+            <h1 style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>You are not authorized to access this page.</h1>
+          )
+      }
     </BrowserRouter>
   )
 }
 
-export default App
+const mapStateToProps = state => ({
+  role: state.role,
+  token: state.token,
+});
+
+export default connect(mapStateToProps)(App)

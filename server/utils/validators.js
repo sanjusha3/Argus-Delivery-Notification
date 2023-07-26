@@ -37,19 +37,6 @@ const validators = (emp_id, emp_name, email, phone, password) => {
     if (Object.keys(errors).length > 0) {
         return errors;
     }
-
-    // If no validation errors, proceed with registration logic
-    // const newUser = {
-    //     id,
-    //     name,
-    //     email,
-    //     phone,
-    //     password
-    // };
-    // registeredUsers.push(newUser);
-
-    // Return success response
-    // res.status(200).json({ message: 'Registration successful' });
 }
 
 module.exports = validators
