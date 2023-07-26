@@ -27,7 +27,7 @@ const Packages = () => {
     };
 
     const fetchData = async () => {
-        await fetch("http://localhost:8080/employee/get-employee-packages/sas", {
+        await fetch("http://localhost:8000/employee/get-employee-packages/Zainab raja", {
             method: 'GET',
             credentials: 'include',
             // headers: {
