@@ -66,7 +66,7 @@ const EmployeePackages = () => {
     return (
         <div style={{ width: "100%", display: 'flex', flexDirection: "column", alignItems: 'center', justifyContent: "center", marginBottom: "1rem" }}>
             <Paper sx={{ width: '95%', overflow: 'hidden' }}>
-                <TableContainer>
+                <TableContainer sx={{ maxHeight: "600px" }}>
                     <Table stickyHeader aria-label="sticky table">
                         <TableHead>
                             <TableRow>

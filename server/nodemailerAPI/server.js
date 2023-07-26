@@ -1,50 +1,27 @@
-const express = require("express");
-const nodemailer = require("nodemailer");
-const app = express();
-require("dotenv").config();
+const nodemailer = require('nodemailer');
 
 
-// const port = 3001;
-// app.listen(port, () => {
-//     console.log(`Server is running on port: ${port}`);
-// });
-
-let transporter = nodemailer.createTransport({
-    service: "gmail",
+let mailTransporter = nodemailer.createTransport({
+    service: 'gmail',
     auth: {
-        type: "OAuth2",
-        user: process.env.user,
-        pass: process.env.pass,
-        clientId: process.env.clientId,
-        clientSecret: process.env.clientSecret,
-        refreshToken: process.env.refreshToken,
-    },
-});
-
-transporter.verify((err, success) => {
-    err
-        ? console.log(err)
-        : console.log(`=== Server is ready to take messages: ${success} ===`);
-});
-
-let mailOptions = {
-    from: process.env.user,
-    to: "gunnu7007@gmail.com",
-    subject: "Nodemailer API",
-    text: "Hi from your nodemailer API",
-};
-
-transporter.sendMail(mailOptions, function (err, data) {
-    console.log("trying");
-    if (err) {
-        console.log("trying");
-        console.log("Error " + err);
-    } else {
-        console.log("Email sent successfully");
+        user: 'snagwani@argusoft.com',
+        pass: 'Argusoftnag@361'
     }
 });
 
-const port = 3001;
-app.listen(port, () => {
-    console.log(`Server is running on port: ${port}`);
+// const mail = "sanjusha.nagwani50@gmail.com"
+
+let mailDetails = {
+    from: 'snagwani@argusoft.com',
+    to: mail,
+    subject: 'Test mail',
+    text: 'Node.js testing mail for Argus Delivery'
+};
+
+mailTransporter.sendMail(mailDetails, function (err, data) {
+    if (err) {
+        console.log('Error Occurs');
+    } else {
+        console.log('Email sent successfully');
+    }
 });
