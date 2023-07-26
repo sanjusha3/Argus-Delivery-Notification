@@ -24,7 +24,7 @@ const NavBar = () => {
 
     const handleLogout = async (e) => {
         try {
-            await fetch('http://localhost:8080/auth/logout', {
+            await fetch('http://localhost:8000/auth/logout', {
                 method: 'GET',
                 credentials: 'include',
             })

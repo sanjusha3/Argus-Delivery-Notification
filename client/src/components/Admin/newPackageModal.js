@@ -34,7 +34,7 @@ const NewPackageModal = () => {
 
     const handleSubmit = () => {
         try {
-            fetch("http://localhost:8080/admin/add-new-package",
+            fetch("http://localhost:8000/admin/add-new-package",
                 {
                     method: "POST",
                     headers: {

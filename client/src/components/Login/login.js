@@ -20,7 +20,6 @@ const Login = (props) => {
             ...prevData,
             [name]: value,
         }));
-        console.log(name)
         setLoginErrors((prevData) => ({
             ...prevData,
             [name]: ""
@@ -29,9 +28,8 @@ const Login = (props) => {
 
     const handleLoginFormSubmit = async (event) => {
         event.preventDefault()
-        // console.log(loginFormData)
         try {
-            await fetch("http://localhost:8080/auth/login",
+            await fetch("http://localhost:8000/auth/login",
                 {
                     method: "POST",
                     credentials: 'include',
@@ -45,21 +43,15 @@ const Login = (props) => {
                 .then(data => {
                     console.log(data)
                     if (data.status) {
-                        navigate("/employee/packages");
+                        if (data.admin) {
+                            navigate("/admin/employeeDetails");
+                        } else {
+                            navigate("/employee/packages");
+                        }
                     } else {
                         setLoginErrors(data.error);
                     }
-                    console.log(loginErrors)
                 })
-            fetch("/employee/get-employee-packages/Zainab Raja", {
-                method: 'GET',
-                credentials: 'include',
-                headers: {
-                    'Authorization': `Bearer <your_jwt_token_here>`,
-                },
-            })
-                .then(res => res.json())
-                .then(data => console.log(data))
         }
         catch (err) {
             console.log(err)

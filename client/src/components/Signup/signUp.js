@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useEffect, useState, Redirect } from "react"
 import { Link, useNavigate } from "react-router-dom";
 // import { InfoOutlined } from "@mui/icons-material";
 import { BiInfoCircle } from "react-icons/bi"
@@ -11,8 +11,16 @@ const Signup = (props) => {
     const [signUpErrors, setSignUpErrors] = useState({
         emp_id: "", emp_name: "", email: "", phone: "", pswd: ""
     })
-
+    console.log("pprops", props)
     const navigate = useNavigate();
+
+    // useEffect = () => {
+    //     props.isLoggedIn ? (
+    //         <Redirect to="/dashboard" />
+    //     ) : (
+    //         <Component {...props} />
+    //     )
+    // }
 
     const handleSignupChange = (event) => {
         const { name, value } = event.target;
@@ -30,7 +38,7 @@ const Signup = (props) => {
     const handleSignupFormSubmit = (event) => {
         event.preventDefault()
         try {
-            fetch("http://localhost:8080/auth/register",
+            fetch("http://localhost:8000/auth/register",
                 {
                     method: "POST",
                     headers: {

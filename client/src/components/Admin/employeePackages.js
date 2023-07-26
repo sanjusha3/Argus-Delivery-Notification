@@ -38,7 +38,7 @@ const EmployeePackages = () => {
     };
 
     const fetchData = async () => {
-        await fetch("http://localhost:8080/admin/getAllPackages/", {
+        await fetch("http://localhost:8000/admin/getAllPackages/", {
             method: 'GET',
             credentials: 'include',
             // headers: {

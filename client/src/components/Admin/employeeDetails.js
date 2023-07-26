@@ -26,7 +26,7 @@ const EmployeeDetails = () => {
     };
 
     const fetchData = async () => {
-        await fetch("http://localhost:8080/admin/employee-details/", {
+        await fetch("http://localhost:8000/admin/employee-details/", {
             method: 'GET',
             credentials: 'include',
             // headers: {
